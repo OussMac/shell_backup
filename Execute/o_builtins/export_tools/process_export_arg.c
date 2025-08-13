@@ -71,12 +71,11 @@ static int  append_value(char *new_var, t_envlist *env)
             env->value = ft_strjoin(old_value, value);
             free(value);
             free(old_value);
-            env->exported = EXPORTED;
-            return (free(key), EXIT_SUCCESS);
+            return (env->exported = EXPORTED, free(key), EXIT_SUCCESS);
         }
         env = env->next;
     }
-    return (EXIT_SUCCESS); // fallback shouldnt happen.
+    return (puts("test kaydkhl"), EXIT_SUCCESS); // fallback shouldnt happen.
 }
 
 static  bool    already_exported(char *new_var, t_data *data)
@@ -107,6 +106,7 @@ void process_export_arg(char *arg, t_data *data)
     }
     if (already_exported(arg, data))
     {
+        puts("deja kain");
         if (has_plus(arg))
             append_value(arg, data->env);
         else if (has_equal(arg))
@@ -117,7 +117,15 @@ void process_export_arg(char *arg, t_data *data)
         if (has_equal(arg))
         {
             if (has_plus(arg))
-                append_value(arg, data->env);
+            {
+                if (already_exported(arg, data))
+                    append_value(arg, data->env);
+                else
+                {
+                    arg = trim_plus(arg); // might have a leak
+                    add_to_envlist(&data->env, arg, EXPORTED);
+                }
+            }
             else
                 add_to_envlist(&data->env, arg, EXPORTED);
         }

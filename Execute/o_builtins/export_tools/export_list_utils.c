@@ -1,5 +1,37 @@
 #include "../../execute.h"
 
+//trims + from string x+="value"
+char    *trim_plus(char *str)
+{
+    int     plus;
+    char    *var;
+    int     eql;
+    char    *value;
+    char    *trim;
+
+    plus = 0;
+    while (str[plus])
+        if (str[plus++] == '+')
+            break ;
+    var = ft_substr(str, 0, plus - 1);
+    if (!var)
+        return (NULL);
+    eql = 0;
+    while (str[eql])
+        if (str[eql++] == '=')
+            break ;
+    puts(var);
+    value = ft_substr(str, eql - 1, o_ft_strlen(str));
+    if (!value)
+        return (free(var), NULL);
+    puts(value);
+    trim = ft_strjoin(var, value);
+    if (!trim)
+        return (free(var), free(value), NULL);
+    puts(trim);
+    return (trim);
+}
+
 bool    has_equal(char *str)
 {
     int i;

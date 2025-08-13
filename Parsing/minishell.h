@@ -519,6 +519,7 @@ bool				valid_identifier(char *str);
 bool				valid_identifier_core(char *str, int *i, bool *standalone);
 bool				has_equal(char *str);
 bool				has_plus(char *str);
+char				*trim_plus(char *str);
 
 
 // Expanding enrty functions.

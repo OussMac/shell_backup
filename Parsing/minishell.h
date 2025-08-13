@@ -512,6 +512,14 @@ size_t              arg_count(char **argv);
 int                 add_last_executed(t_tree *node, t_data *data);
 char                *get_key(char *str);
 char                *get_value(char *str);
+int 				add_to_export_list(t_envlist **export_lst, t_envlist *env);
+void				free_exp_list(t_envlist *exp_list);
+void				process_export_arg(char *arg, t_data *data); // make sure this is checked for success.
+bool				valid_identifier(char *str);
+bool				valid_identifier_core(char *str, int *i, bool *standalone);
+bool				has_equal(char *str);
+bool				has_plus(char *str);
+
 
 // Expanding enrty functions.
 int                 expand_wild_cards(t_tree *node);
@@ -528,12 +536,10 @@ char                *join_system(t_arg **p_arg);
 char	            *pocket_joiner(char **pockets);
 char	            *o_ft_itoa(int n);
 size_t	            o_ft_strlen(char *s);
-char                **realloc_pockets(char **old_pocket, size_t old_cap, size_t new_cap);
-int                 internal_field_seperator(char *raw, t_data *data, char ***pockets);
 bool                has_space(char *str);
 bool				has_equal(char *str);
 bool                has_delim(char *str);
-char                **IFS_pass(char **argv);
+char                **ifs_pass(char **argv);
 void                fail_procedure(char **pockets, t_data *data);
 bool                ft_isalnum(int c);
 char                *expand_special_cases(char *str, t_data *data, int *i);
@@ -562,7 +568,7 @@ int                 add_to_envlist(t_envlist **envlist, char *str, bool exported
 // Redirections 
 int                 handle_red(t_tree *node, t_data *data);
 void    			restore_IO(int saved_in, int saved_out, bool no_red);
-char				*red_IFS_pass(char *str);
+char				*red_ifs_pass(char *str);
 bool 				only_spaces(char *raw);
 
 int red_here_doc(t_red *red);
@@ -576,13 +582,12 @@ void                free_argv(char **argv);
 void                clean_up(t_tree *tree, t_data *data);
 void                free_envlist(t_envlist *env);
 
-void *ft_realloc(void *ptr, size_t old_size, size_t new_size);
 
 int expand_unqoted_d(char ***pockets, t_data *data, char *raw); // zdt
 char *append_delimiter(char *str);
 
 
-char *strjoiner(char **list, char *sep, size_t size);
+char		*strjoiner(char **list, char *sep, size_t size);
 
 void print_argv(char **argv);
 

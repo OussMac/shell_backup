@@ -74,6 +74,5 @@ int	pocket_insertion(char **pockets, char *str, t_data *data, bool was_d_quoted)
 				return(fail_procedure(pockets, data), EXIT_FAILURE); // free backwards.
 		}
 	}
-	data->pockets = pockets;
-	return (EXIT_SUCCESS);
+	return (data->pockets = pockets, EXIT_SUCCESS);
 }

@@ -9,7 +9,6 @@ void    free_arg_list(t_arg *arg)
         return ;
     while (arg)
     {
-
         tmp = arg->next;
         free(arg->value);
         free(arg);
@@ -42,12 +41,6 @@ char **convert_list_to_argv(t_arg *arg, t_data *data)
         return (free_arg_list(cv.free_head), NULL); // cleanup return;
     if (expand_list(arg, data) != EXIT_SUCCESS) // expanding.
         return (free_arg_list(cv.free_head), free(cv.argv), NULL);
-    // loop to print list
-    for (t_arg *curr = arg; curr; curr = curr->next)
-    {
-        printf("argv: %s\n", curr->value);
-    }
-    //----
     cv.i = 0;
     while(arg)
     {
@@ -60,7 +53,7 @@ char **convert_list_to_argv(t_arg *arg, t_data *data)
         }
     }
     cv.argv[cv.i] = NULL;
-    cv.new_argv = IFS_pass(cv.argv);
+    cv.new_argv = ifs_pass(cv.argv);
     if (!cv.new_argv)
         return (free_argv(cv.argv), free_arg_list(cv.free_head), NULL);
     return (free_argv(cv.argv), free_arg_list(cv.free_head), cv.new_argv);

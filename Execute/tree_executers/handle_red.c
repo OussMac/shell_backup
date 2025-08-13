@@ -146,7 +146,7 @@ int handle_red(t_tree *node, t_data *data)
             return (EXIT_FAILURE);
         free(curr_red->value);
         curr_red->value = expanded;
-        curr_red->value = red_IFS_pass(curr_red->value); // free this
+        curr_red->value = red_ifs_pass(curr_red->value); // free this
         if (ambig_wrapper(curr_red->value, ambig, curr_red->was_d_quote))
             return (dprintf(2 , RED"Master@Mind: %s: ambiguous redirect\n"RST, curr_red->value), EXIT_FAILURE);
         if (redirect_current(curr_red, data) != EXIT_SUCCESS)

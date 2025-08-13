@@ -45,7 +45,11 @@ SRC = minishell.c Identificators/identity_tools/identool0.c\
 		../Execute/tree_executers/shortcircuit.c ../Execute/tree_executers/handle_red.c \
 		../Execute/o_builtins/o_bultins.c ../Execute/o_builtins/o_echo.c \
 		../Execute/o_builtins/o_cd.c ../Execute/o_builtins/o_env.c \
-		../Execute/o_builtins/o_exit.c ../Execute/o_builtins/o_export.c \
+		../Execute/o_builtins/o_exit.c ../Execute/o_builtins/export_tools/o_export.c \
+		../Execute/o_builtins/export_tools/export_list_utils.c \
+		../Execute/o_builtins/export_tools/process_export_arg.c \
+		../Execute/o_builtins/export_tools/valid_identifier_core.c \
+		../Execute/o_builtins/export_tools/valid_identifier.c \
 		../Execute/o_builtins/o_pwd.c ../Execute/o_builtins/o_unset.c \
 		../Execute/o_builtins/wild_card.c ../Execute/tree_executers/merge_utils/merge_env.c \
 		../Execute/tree_executers/merge_utils/merge_env_utils.c \
@@ -54,11 +58,10 @@ SRC = minishell.c Identificators/identity_tools/identool0.c\
 		../Execute/Expansion/join_system.c ../Execute/Expansion/merge_arglist.c 		\
 		../Execute/Expansion/pocket_expantion.c ../Execute/Expansion/pocket_insertion.c \
 		../Execute/Expansion/expansion_utils.c ../Execute/tree_executers/last_exec.c 	\
-		../Execute/Expansion/ft_realloc.c ../Execute/Expansion/split_IFS.c 				\
+		../Execute/Expansion/split_ifs.c 												\
 		../Execute/Expansion/internal_field_seperator_pass.c 							\
 		../Execute/Expansion/pocket_insertion_utils.c ../Execute/anon_system/anon.c		\
-		../Execute/anon_system/anon_terminator.c ../Execute/Expansion/expand_unquoted_d.c
-
+		../Execute/anon_system/anon_terminator.c ../Execute/Expansion/strjoiner.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)

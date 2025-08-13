@@ -229,6 +229,7 @@ typedef struct s_data
     t_tree *head;
     char *last_executed;
     int anon_start;
+	char	**pockets;
 }	t_data;
 
 // Linked List To Store Each Entity
@@ -474,6 +475,7 @@ typedef struct s_ifs_vars
     t_ifs   *ifs_list;
     int     i;
     int     j;
+	char	*string;
 }   t_ifs_vars;
 
 typedef struct s_convert
@@ -529,6 +531,7 @@ size_t	            o_ft_strlen(char *s);
 char                **realloc_pockets(char **old_pocket, size_t old_cap, size_t new_cap);
 int                 internal_field_seperator(char *raw, t_data *data, char ***pockets);
 bool                has_space(char *str);
+bool				has_equal(char *str);
 bool                has_delim(char *str);
 char                **IFS_pass(char **argv);
 void                fail_procedure(char **pockets, t_data *data);
@@ -574,6 +577,9 @@ void                clean_up(t_tree *tree, t_data *data);
 void                free_envlist(t_envlist *env);
 
 void *ft_realloc(void *ptr, size_t old_size, size_t new_size);
+
+int expand_unqoted_d(char ***pockets, t_data *data, char *raw); // zdt
+char *append_delimiter(char *str);
 
 
 char *strjoiner(char **list, char *sep, size_t size);

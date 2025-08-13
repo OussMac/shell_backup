@@ -1,5 +1,5 @@
 CC = cc 
-SANITIZE= #-fsanitize=address -g3
+SANITIZE= -fsanitize=address -g3
 CFLAG = -I$(READLINE_DIR)/include # zdt readline library (MAC) -Wall -Wextra -Werror
 READLINE_DIR := ../lib/readline/install
 LDFLAGS += -L$(READLINE_DIR)/lib -lreadline -lhistory -lncurses
@@ -57,7 +57,7 @@ SRC = minishell.c Identificators/identity_tools/identool0.c\
 		../Execute/Expansion/ft_realloc.c ../Execute/Expansion/split_IFS.c 				\
 		../Execute/Expansion/internal_field_seperator_pass.c 							\
 		../Execute/Expansion/pocket_insertion_utils.c ../Execute/anon_system/anon.c		\
-		../Execute/anon_system/anon_terminator.c
+		../Execute/anon_system/anon_terminator.c ../Execute/Expansion/expand_unquoted_d.c
 
 OBJ = $(SRC:.c=.o)
 

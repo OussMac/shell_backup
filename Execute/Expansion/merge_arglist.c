@@ -42,6 +42,12 @@ char **convert_list_to_argv(t_arg *arg, t_data *data)
         return (free_arg_list(cv.free_head), NULL); // cleanup return;
     if (expand_list(arg, data) != EXIT_SUCCESS) // expanding.
         return (free_arg_list(cv.free_head), free(cv.argv), NULL);
+    // loop to print list
+    for (t_arg *curr = arg; curr; curr = curr->next)
+    {
+        printf("argv: %s\n", curr->value);
+    }
+    //----
     cv.i = 0;
     while(arg)
     {

@@ -7,7 +7,7 @@ bool    has_delim(char *str)
     i = 0;
     while (str[i])
     {
-        if (str[i] == (char)27)
+        if (str[i] == (char)1)
             return (true);
         i++;
     }
@@ -33,13 +33,13 @@ bool    has_space(char *str)
     return (false);
 }
 
-static  char *append_delimiter(char *str)
+char *append_delimiter(char *str)
 {
     char    *first_border;
     char    *last_border;
     char    delim[2];
 
-    delim[0] = (char)27;
+    delim[0] = (char)1;
     delim[1] = '\0';
 
     first_border= ft_strjoin(delim, str);
@@ -194,7 +194,7 @@ int internal_field_seperator(char *raw, t_data *data, char ***pockets)
 //     if (!new_pocket)
 //         return (EXIT_FAILURE); // clean
 //     i = 0;
-//     printf("==========> j: %d\n", data->pc.j);
+//     // printf("==========> j: %d\n", data->pc.j);
 //     while(i < data->pc.j)
 //     {
 //         new_pocket[i] = ft_strdup((*pockets)[i]);
@@ -213,9 +213,9 @@ int internal_field_seperator(char *raw, t_data *data, char ***pockets)
 //     // free(*pockets);
 //     // free(mini_pocket);
 //     *pockets = new_pocket;
-//     printf ("=======> j [%d] = allocated cap %zu + mini pocket %zu\n", data->pc.j, data->pc.cap, mc_argc);
+//     // printf ("=======> j [%d] = allocated cap %zu + mini pocket %zu\n", data->pc.j, data->pc.cap, mc_argc);
 //     data->pc.j += mc_argc; // print these values and debug.
 //     data->pc.cap = data->pc.cap + mc_argc;
-//     printf ("=======> j [%d] = allocated cap %zu + mini pocket %zu\n", data->pc.j, data->pc.cap, mc_argc);
+//     // printf ("=======> j [%d] = allocated cap %zu + mini pocket %zu\n", data->pc.j, data->pc.cap, mc_argc);
 //     return (EXIT_SUCCESS);
 // }

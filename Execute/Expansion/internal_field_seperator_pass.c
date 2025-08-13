@@ -67,17 +67,51 @@ char **ifs_list_to_argv(t_ifs *head)
     return (argv);
 }
 
+static char *eliminate_ifs_equal(char *str)
+{
+    char    **split;
+    int     i;
+    char    *joined;
+    char    *full;
+    char    *key;
+
+    split = ft_split(str, (char)1);
+    if (!split)
+        return (NULL);
+    i = 1;
+    key = ft_strdup(split[0]);
+    if (!key)
+        return (free_argv(split), NULL);
+    joined = strjoiner(split + 1, " ", arg_count(split + 1));
+    if (!joined)
+        return (free(key), free_argv(split), NULL);
+    full = ft_strjoin(key, joined);
+    if (!full)
+         return (free(joined), free(key), free_argv(split), NULL);
+    return (free(joined), free(key), free_argv(split), full);
+}
+
 static int append_ifs(t_ifs_vars *ifs, char *str)
 {
-    ifs->ifs_split = ft_split(str, (char)27);
+    if (has_equal(str))
+    {
+        ifs->string = eliminate_ifs_equal(str);
+        if (!ifs->string)
+            return (EXIT_FAILURE);
+        if (add_ifs_back(&ifs->ifs_list, ifs->string) != EXIT_SUCCESS)
+            return (free(ifs->string), ifs->string = NULL, EXIT_FAILURE);
+        free(ifs->string);
+        ifs->string = NULL;
+        return(EXIT_SUCCESS);
+    }
+    ifs->ifs_split = ft_split(str, (char)1);
     if (!ifs->ifs_split)
         return (EXIT_FAILURE);
-    print_argv(ifs->ifs_split);
     ifs->j = 0;
     while (ifs->ifs_split[ifs->j])
     {
         if (add_ifs_back(&ifs->ifs_list, ifs->ifs_split[ifs->j++]) != EXIT_SUCCESS)
-            return (free_ifs_list(ifs->ifs_list), free_argv(ifs->ifs_split), EXIT_FAILURE);
+            return ( free_argv(ifs->ifs_split), EXIT_FAILURE);
     }
     free_argv(ifs->ifs_split);
     return (EXIT_SUCCESS);
@@ -156,11 +190,10 @@ char    *red_IFS_pass(char *str)
 
     if (str[0] == '\0')
         return (ft_strdup(""));
-    ifs_split = ft_split(str, (char)27);
+    ifs_split = ft_split(str, (char)1);
     if (!ifs_split)
         return (NULL);
     joined = strjoiner(ifs_split, " ", arg_count(ifs_split));
-    puts(joined);
     if (!joined)
         return (free_argv(ifs_split), NULL);
     return (joined);

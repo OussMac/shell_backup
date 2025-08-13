@@ -19,7 +19,6 @@ static int	count_dollars(char *s)
 // function entry for expanding a variable can be "$HOME" or "this $USER, is $HOME"
 char	*expand_var(char *str, t_data *data, bool was_d_quoted)
 {
-	char	**pockets;
 	char	*expanded;
 	int		dollar_count;
 
@@ -27,16 +26,17 @@ char	*expand_var(char *str, t_data *data, bool was_d_quoted)
     if (str[0] == '\0')
         return (ft_strdup("")); // empty case.
 	dollar_count = count_dollars(str);
-	pockets = malloc(sizeof(char *) * (dollar_count * 2 + 2)); // $x  1 * 2 ==> 2 +2 4 [""][x value][""][NULL]
-	if (!pockets)
+	data->pockets = calloc((dollar_count * 2 + 2), sizeof(char *)); // $x  1 * 2 ==> 2 +2 4 [""][x value][""][NULL]
+	if (!data->pockets)
 		return (NULL);
 	data->pc.cap = (size_t)(dollar_count * 2 + 2);
-	if (pocket_insertion(pockets, str, data, was_d_quoted) != EXIT_SUCCESS)
+	if (pocket_insertion(data->pockets, str, data, was_d_quoted) != EXIT_SUCCESS)
 		return (NULL);
-	expanded = pocket_joiner(pockets);
+
+	expanded = pocket_joiner(data->pockets);
 	if (!expanded)
-		return (free_argv(pockets), NULL);
-	free_argv(pockets);
+		return (free_argv(data->pockets), NULL);
+	free_argv(data->pockets);
 	return (expanded);
 }
 
@@ -53,7 +53,7 @@ int expand_list(t_arg *arg, t_data *data)
     {
         if (!curr->was_s_quote) // if not single quoted, expand
         {
-            expanded = expand_var(curr->value, data, curr->was_d_quote);
+            expanded = expand_var(curr->value, data, curr->was_d_quote); // wouldnt need pocket expansion algo we will do it differently
             if (!expanded)
                 return (EXIT_FAILURE);
             free(curr->value);

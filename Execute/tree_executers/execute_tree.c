@@ -59,7 +59,6 @@ static int  update_env_variables(t_data *data)
 
     temp_vec = data->env_vec;
     data->env_vec = convert_list_to_envp(data->env);
-    print_argv(data->env_vec);
     if (!data->env_vec)
     {
         free(temp_vec);

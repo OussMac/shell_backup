@@ -28,26 +28,25 @@ static size_t   arglist_size(t_arg *arg)
     }
     return (size);
 }
-
-// entry function
+// entry
 char **convert_list_to_argv(t_arg *arg, t_data *data)
 {
     t_convert   cv;
 
     cv.free_head = arg;
+    if (expand_list(arg, data) != EXIT_SUCCESS)
+        return (free_arg_list(cv.free_head), NULL);
     cv.argc = arglist_size(arg);
-    cv.argv = malloc ((cv.argc + 1)* sizeof(char *));
+    cv.argv = malloc((cv.argc + 1) * sizeof(char *));
     if (!cv.argv)
-        return (free_arg_list(cv.free_head), NULL); // cleanup return;
-    if (expand_list(arg, data) != EXIT_SUCCESS) // expanding.
-        return (free_arg_list(cv.free_head), free(cv.argv), NULL);
+        return (free_arg_list(cv.free_head), NULL);
     cv.i = 0;
-    while(arg)
+    while (arg)
     {
-        cv.argv[cv.i] = join_system(&arg);  // join args if needed.
+        cv.argv[cv.i] = join_system(&arg);  // join args if needed
         if (!cv.argv[cv.i++])
         {
-            while (--cv.i >= 0) // cleanup
+            while (--cv.i >= 0)
                 free(cv.argv[cv.i]);
             return (free(cv.argv), free_arg_list(cv.free_head), NULL);
         }
@@ -58,3 +57,4 @@ char **convert_list_to_argv(t_arg *arg, t_data *data)
         return (free_argv(cv.argv), free_arg_list(cv.free_head), NULL);
     return (free_argv(cv.argv), free_arg_list(cv.free_head), cv.new_argv);
 }
+

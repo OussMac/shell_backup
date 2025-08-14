@@ -489,7 +489,7 @@ typedef struct s_convert
 
 
 // Main Exec Functionality.
-int                 exec_node(t_tree *node, t_data *data);
+int					exec_node(t_tree *node, t_data *data);
 int                 merger(t_tree *root, t_data *data, char **env);
 int                 recursive_execution(t_tree *node, t_data *data);
 int                 execute_pipeline(t_tree *node, t_data *data, int input_fd);
@@ -514,12 +514,15 @@ char                *get_key(char *str);
 char                *get_value(char *str);
 int 				add_to_export_list(t_envlist **export_lst, t_envlist *env);
 void				free_exp_list(t_envlist *exp_list);
-void				process_export_arg(char *arg, t_data *data); // make sure this is checked for success.
+int					process_export_arg(char *arg, t_data *data);
 bool				valid_identifier(char *str);
 bool				valid_identifier_core(char *str, int *i, bool *standalone);
 bool				has_equal(char *str);
 bool				has_plus(char *str);
-char				*trim_plus(char *str);
+int					process_existing_var(char *arg, t_data *data);
+int					process_new_var(char *arg, t_data *data);
+int					assign_new_value(char *new_var, t_envlist *env);
+int					append_value(char *new_var, t_envlist *env);
 
 
 // Expanding enrty functions.
@@ -555,8 +558,9 @@ char                **terminate_inside_anons(char **argv);
 bool				single_anon(char *str);
 
 // Wildcard
-bool                has_star(char *str);
-int                 link_patterns_to_argv(t_tree *node);
+int					try_expand_wildcard(t_arg *arg);
+void				sort_files(char **files);
+int					count_files(void);
 
 
 // Linked env
@@ -572,11 +576,9 @@ void    			restore_IO(int saved_in, int saved_out, bool no_red);
 char				*red_ifs_pass(char *str);
 bool 				only_spaces(char *raw);
 
-int red_here_doc(t_red *red);
+int 				red_here_doc(t_red *red);
 
 
-// Utilsin pipleine cuz i didnt recurs it back to rec exec.
-char                *get_absolute_path(char *cmd);
 
 // Free_tree (error handling)
 void                free_argv(char **argv);
@@ -584,13 +586,13 @@ void                clean_up(t_tree *tree, t_data *data);
 void                free_envlist(t_envlist *env);
 
 
-int expand_unqoted_d(char ***pockets, t_data *data, char *raw); // zdt
-char *append_delimiter(char *str);
+int 				expand_unqoted_d(char ***pockets, t_data *data, char *raw); // zdt
+char 				*append_delimiter(char *str);
 
 
-char		*strjoiner(char **list, char *sep, size_t size);
+char				*strjoiner(char **list, char *sep, size_t size);
 
-void print_argv(char **argv);
+void 				print_argv(char **argv);
 
 
 

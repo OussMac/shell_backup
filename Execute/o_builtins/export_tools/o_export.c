@@ -89,7 +89,11 @@ int o_export(t_tree *node, t_data *data)
         i = 1;
         while (node->argv[i])
         {
-            process_export_arg(node->argv[i], data);
+            if (process_export_arg(node->argv[i], data) != EXIT_SUCCESS)
+            {
+                free_exp_list(export_lst);
+                return (EXIT_FAILURE);
+            }
             i++;
         }
     }

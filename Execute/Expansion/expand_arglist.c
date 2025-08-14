@@ -59,6 +59,8 @@ int expand_list(t_arg *arg, t_data *data)
             free(curr->value);
             curr->value = expanded;
         }
+		if (try_expand_wildcard(curr) != EXIT_SUCCESS)
+			return (EXIT_FAILURE);
         // skips over literal strings s quoted, aymane trims those quotes anyway.
         curr = curr->next;
     }

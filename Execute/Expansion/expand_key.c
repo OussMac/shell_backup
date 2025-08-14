@@ -8,14 +8,12 @@ static char *o_ft_strtrim(char *s, char *set)
     if (!s || !set)
         return (NULL);
     start = 0;
-    // skip leading characters in 'set'
     while (s[start] && ft_strchr(set, s[start]))
         start++;
     end = o_ft_strlen(s);
     if (end == 0)
         return (ft_substr(s, 0, 0));
     end--;
-    // skip trailing characters in 'set'
     while (end > start && ft_strchr(set, s[end]))
         end--;
     return (ft_substr(s, start, end - start + 1));

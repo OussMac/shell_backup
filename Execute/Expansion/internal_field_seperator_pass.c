@@ -93,17 +93,17 @@ static char *eliminate_ifs_equal(char *str)
 
 static int append_ifs(t_ifs_vars *ifs, char *str)
 {
-    if (has_equal(str))
-    {
-        ifs->string = eliminate_ifs_equal(str);
-        if (!ifs->string)
-            return (EXIT_FAILURE);
-        if (add_ifs_back(&ifs->ifs_list, ifs->string) != EXIT_SUCCESS)
-            return (free(ifs->string), ifs->string = NULL, EXIT_FAILURE);
-        free(ifs->string);
-        ifs->string = NULL;
-        return(EXIT_SUCCESS);
-    }
+    // if (has_equal(str))
+    // {
+    //     ifs->string = eliminate_ifs_equal(str);
+    //     if (!ifs->string)
+    //         return (EXIT_FAILURE);
+    //     if (add_ifs_back(&ifs->ifs_list, ifs->string) != EXIT_SUCCESS)
+    //         return (free(ifs->string), ifs->string = NULL, EXIT_FAILURE);
+    //     free(ifs->string);
+    //     ifs->string = NULL;
+    //     return(EXIT_SUCCESS);
+    // }
     ifs->ifs_split = ft_split(str, (char)1);
     if (!ifs->ifs_split)
         return (EXIT_FAILURE);
@@ -126,7 +126,12 @@ char    **ifs_pass(char **argv)
     ifs.ifs_list = NULL;
     while (argv[ifs.i])
     {
-        if (has_delim(argv[ifs.i]))
+        if (ft_strchr(argv[ifs.i], '='))
+        {
+            if (add_ifs_back(&ifs.ifs_list, argv[ifs.i]) != EXIT_SUCCESS)
+                return (free_ifs_list(ifs.ifs_list), NULL);
+        }
+        else if (has_delim(argv[ifs.i]))
         {
             if (append_ifs(&ifs, argv[ifs.i]) != EXIT_SUCCESS)
                 return (free_ifs_list(ifs.ifs_list), NULL);

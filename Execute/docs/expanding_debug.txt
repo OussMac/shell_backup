@@ -1,0 +1,53 @@
+oimzilen@e3r10p16 parsing % make all clean && ./minishell
+Master@Mindv3.0> export a="b c d"
+arg =====> export
+expanded arg =====> export
+arg =====> a=
+expanded arg =====> a=
+arg =====> b c d
+expanded arg =====> b c d
+before ifs pass
+valid argv ptr
+== -
+ == >[0]: export
+== -
+ == >[1]: a=b c d
+after ifs pass
+valid argv ptr
+== -
+ == >[0]: export
+== -
+ == >[1]: a=b c d
+Master@Mindv3.0> export $a=$a
+arg =====> export
+expanded arg =====> export
+arg =====> $a=$a
+==> raw b c d
+==> raw b c d
+expanded arg =====> bcd=bcd
+before ifs pass
+valid argv ptr
+== -
+ == >[0]: export
+== -
+ == >[1]: bcd=bcd
+after ifs pass
+valid argv ptr
+== -
+ == >[0]: export
+== -
+ == >[1]: b
+== -
+ == >[2]: c
+== -
+ == >[3]: d
+== -
+ == >[4]: =
+== -
+ == >[5]: b
+== -
+ == >[6]: c
+== -
+ == >[7]: d
+Master@Mind: export: `=': not a valid identifier
+Master@Mindv3.0> 

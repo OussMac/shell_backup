@@ -69,6 +69,8 @@ static int  red_append(t_red *red, t_data *data)
 
 int red_here_doc(t_red *red)
 {
+    if (red->fd_here_doc == -1)
+        return (EXIT_FAILURE);
     if (dup2(red->fd_here_doc, STDIN_FILENO) == -1)
         return (perror("dup2"), EXIT_FAILURE);
     close(red->fd_here_doc);
@@ -127,7 +129,7 @@ static bool ambig_wrapper(char *str, bool ambig_dollar, bool dquoted)
         return (false);
     if (!dquoted && has_space(str))
         return (true);
-    if (!dquoted && str[0] == (char)127)
+    if (!dquoted && str[0] == ANON)
         return (true);
     return (false);
 }
@@ -147,10 +149,10 @@ int handle_red(t_tree *node, t_data *data)
         free(curr_red->value);
         curr_red->value = expanded;
         curr_red->value = red_ifs_pass(curr_red->value); // free this
-        if (ambig_wrapper(curr_red->value, ambig, curr_red->was_d_quote))
+        if (curr_red->tok != DEL_ID && ambig_wrapper(curr_red->value, ambig, curr_red->was_d_quote))
             return (dprintf(2 , RED"Master@Mind: %s: ambiguous redirect\n"RST, curr_red->value), EXIT_FAILURE);
         if (redirect_current(curr_red, data) != EXIT_SUCCESS)
-            return (EXIT_FAILURE);
+            return (data->exit_status = EXIT_FAILURE, EXIT_FAILURE);
         curr_red = curr_red->next;
     }
     return (EXIT_SUCCESS);

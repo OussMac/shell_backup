@@ -71,7 +71,7 @@ int	exec_node(t_tree *node, t_data *data)
 
 	if (node->fake == true)
 		return (EXIT_SUCCESS);
-	id = fork();
+	id = fork(); // protect.
 	if (id == 0)
 		handle_child(node, data);
 	waitpid(id, &ex_status, 0);

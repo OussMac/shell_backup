@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identool7.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: ayel-bou <ayel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 03:26:47 by ayel-bou          #+#    #+#             */
-/*   Updated: 2025/08/07 06:34:14 by codespace        ###   ########.fr       */
+/*   Updated: 2025/08/14 21:39:17 by ayel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,13 @@ int	store_fd(t_token *id_class, t_data *data)
 	{
 		if (curr->tok == DEL_ID && curr->del_fd == false)
 		{
-			if (data->here_fd != -1)
-				curr->here_doc_fd = dup(data->here_fd);
+			if (data->here_read_fd != -1)
+				curr->here_doc_fd = dup(data->here_read_fd);
 			if (curr->here_doc_fd == -1)
-				return (close(data->here_fd), 0);
-			close(data->here_fd);
+				return (close(data->here_read_fd),
+					data->here_read_fd = -1, 0);
+			close(data->here_read_fd);
+			data->here_read_fd = -1;
 			curr->del_fd = true;
 			break ;
 		}

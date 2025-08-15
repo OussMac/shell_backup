@@ -4,7 +4,8 @@ static bool is_printable(char c)
 {
     if (c == '=')
         return (true);
-	if (c >= 32 && c <= 126 || c == '\0')
+	if (c >= 32 && c <= 126 || c == '\0'
+        || (((9 <= c && c <= 13) || c == 32)))
 	{
 		return (true);
 	}
@@ -28,7 +29,7 @@ bool valid_identifier(char *str)
     i = 0;
     standalone = true;
     if (!str[i])
-        return (true);
+        return (false);
     if (!valid_identifier_core(str, &i, &standalone))
         return (false);
     if (standalone)

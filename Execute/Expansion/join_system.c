@@ -8,9 +8,9 @@ char	*o_ft_strjoin(char *s1, char *s2)
 
 	if (!s1 && !s2)
 		return (NULL);
-	if (!s1)
+	if (!s1 || (s1[0] == ANON && s1[1] == '\0'))
 		return (ft_strdup(s2));
-	if (!s2)
+	if (!s2 || (s2[0] == ANON && s2[1] == '\0'))
 		return (ft_strdup(s1));
 	ptr = (char *) malloc ((o_ft_strlen(s1) + o_ft_strlen(s2)) + 1);
 	if (ptr == NULL)
@@ -76,7 +76,7 @@ char *join_system(t_arg **p_arg)
 			return (free(res), NULL);
         free(res);
         res = tmp;
-        if (curr->space_next || ft_strchr(curr->value, (char)127))  // if the parser marked a space after this piece, consume it and stop
+        if (curr->space_next || ft_strchr(curr->value, ANON))  // if the parser marked a space after this piece, consume it and stop
         {
             curr = curr->next;
             break;

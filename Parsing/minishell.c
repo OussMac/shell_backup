@@ -6,12 +6,14 @@
 /*   By: ayel-bou <ayel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 19:15:02 by ayel-bou          #+#    #+#             */
-/*   Updated: 2025/08/09 06:15:05 by ayel-bou         ###   ########.fr       */
+/*   Updated: 2025/08/13 17:27:24 by ayel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 extern int  g_flag;
+
 void	f(void)
 {
 	system("leaks minishell");
@@ -43,7 +45,6 @@ t_tree	*masterpasrse(char *input, t_data *data, t_token **prompts)
 	*prompts = re_identity(token);
 	// clean_id_class(prompts, FAIL);
 	return (build_tree(*prompts));
-	// return (NULL);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -60,6 +61,7 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	// isatty
+	// if (!isatty(1))
 	while (1)
 	{
 		g_flag = 0;
@@ -75,7 +77,7 @@ int	main(int argc, char **argv, char **env)
 		// print_tree(tree);
 		execute_tree(tree, &data, env, re_built);
 	}
-	return (free_argv(data.env_vec), free_envlist(data.env),
+	return (free(data.pwd_reserve), free_argv(data.env_vec), free_envlist(data.env),
 		free(input), EXIT_SUCCESS);
 }
 

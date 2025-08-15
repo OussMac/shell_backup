@@ -6,7 +6,7 @@
 /*   By: ayel-bou <ayel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 03:32:22 by ayel-bou          #+#    #+#             */
-/*   Updated: 2025/08/09 05:45:46 by ayel-bou         ###   ########.fr       */
+/*   Updated: 2025/08/14 21:03:53 by ayel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@
 # define POINT_ONLY 0
 # define POINT_N_GET 0
 # define ANOMALY -1111
+# define EXIT_OVER_LIMIT 2147483650
+# define MAX_FLOW 0
 # define UNIT_HEREDOC 0
 # define UNIT_SPACE_NEXT 1
 # define NEW_LINE "newline"
@@ -220,6 +222,9 @@ typedef struct s_data
 	int				flag;
 	char			*home_p;
 	char			*pwd_reserve;
+	bool			unset_status;
+	bool			export_status;
+	int				here_read_fd;
 	// Exec Data
     int saved_in;
     int saved_out;
@@ -230,6 +235,7 @@ typedef struct s_data
     char *last_executed;
     int anon_start;
 	char	**pockets;
+	bool	child_state;
 }	t_data;
 
 // Linked List To Store Each Entity
@@ -293,6 +299,7 @@ int					get_len(char *str);
 void				puterror(char *str);
 int					whitespaces(char x);
 int					all_whitespaces(char x);
+void				init_tool(t_token *new);
 t_token				*ft_lstlast(t_token *lst);
 int					set_ops(t_token *id_class);
 void				ft_bzero(void *s, size_t n);
@@ -301,6 +308,7 @@ int					check_doubles(char x, char x2);
 void				cpy_identity(char *dst, char *src);
 int					len_of_string(char *input, int index);
 t_token				*get_identity(char *input, t_data *data);
+void				re_init_tool(t_token *new, t_token *old);
 int					ft_strnstr(char *haystack, char *needle, size_t len);
 void				add_back_identity(t_token **lst, t_token *new, int mode);
 void				unit_call_space_next(t_token *id_class,
@@ -339,7 +347,7 @@ int					ft_strcmp(char *s1, char *s2);
 int					ft_strchr(const char *s, int c);
 char				*ft_strtrim(char *s1, char *set);
 int					ft_strncmp(char *s1, char *s2, int n);
-char				*ft_substr(char *s, unsigned int start, size_t len);
+char				*ft_substr(char *s, int start, int len);
 
 // Syntax Verification
 void				puterror(char *str);
@@ -353,7 +361,7 @@ int					push_br(t_token **stack_br, t_token *to_push);
 void				print_error(char *error, char *err, int mode);
 void				syntax_error_found(t_token *curr, t_data *data);
 void				clean_stacks(t_token **stackone, t_token **stacktwo);
-int					syntax_verify(t_token *token, t_data *data, int mode);
+int					syntax_verify(t_token *token, t_data *data);
 int					realt_quotes(char *input, int doubles_case,
 						int index, char *err);
 
@@ -369,10 +377,10 @@ void				cpy_to_file(char *in, t_data *data);
 void				get_quotes_state(t_token *delimiter);
 int					store_fd(t_token *id_class, t_data *data);
 int					change_id(t_token *next_heredoc, t_data *data);
-int					sef_doc(t_token *token, t_data *data, int mode);
+int					sef_doc(t_token *token, t_data *data);
 int					here_doc_check(t_token *id_class, t_data *data);
 int					delimiter_next(t_token *next_heredoc, t_data *data);
-int					hold_and_check(t_token *hold, t_token *curr, int mode);
+int					hold_and_check(t_token *hold, t_token *curr);
 int					here_doc_ops(t_token *id_class, t_data *data, char *del);
 int					requirements(t_token *curr, t_token *id_class,
 						t_data *data);
@@ -384,7 +392,7 @@ int					fake_system(t_token *id_class);
 t_token				*re_identity(t_token *id_class);
 void				cmd_arg(t_token **curr, int *string);
 void				identify_argument(t_token **id_class);
-void				re_identifications(t_token *curr, int *string);
+void				re_identifications(t_token *curr);
 
 // MasterMind System
 int					red_checks(t_token *curr);
@@ -444,6 +452,7 @@ void				clean_id_class(t_token **id_class, int mode);
 void				tree_cleaner(t_tree **node);
 
 // test to be removed after
+void				read_files(t_token *curr, int fd, char *list);
 void				print_tree(t_tree *root);
 int					printer(t_token *curr, char *name);
 int					printer_arg(t_arg *curr, char *name);
@@ -453,6 +462,14 @@ int					printer_red(t_red *curr, char *name);
 
 
 // ouss functions  ---------------------
+
+// garbage collector
+
+typedef struct s_mind_alloc
+{
+	void				*ptr;
+	struct s_mind_alloc	*next;
+}	t_mind_alloc;
 
 #include <dirent.h>
 
@@ -506,6 +523,8 @@ int                 o_exit(t_tree *node, t_data *data);
 int                 o_unset(t_tree *node, t_data *data);
 int                 o_export(t_tree *node, t_data *data);
 int                 exec_builtin(t_tree *node, t_data *data);
+bool				valid_identifier(char *str);
+bool 				valid_identifier_un(char *str);
 size_t              arg_count(char **argv);
 
 // Export
@@ -578,20 +597,20 @@ bool 				only_spaces(char *raw);
 
 int 				red_here_doc(t_red *red);
 
-
-
 // Free_tree (error handling)
 void                free_argv(char **argv);
 void                clean_up(t_tree *tree, t_data *data);
 void                free_envlist(t_envlist *env);
+void				*mind_allocater(size_t size, t_mind_alloc **head);
+void				Mind_free(t_mind_alloc *head);
 
 
 int 				expand_unqoted_d(char ***pockets, t_data *data, char *raw); // zdt
 char 				*append_delimiter(char *str);
 
-
 char				*strjoiner(char **list, char *sep, size_t size);
 
+void    			normalize_command(char *str);
 void 				print_argv(char **argv);
 
 

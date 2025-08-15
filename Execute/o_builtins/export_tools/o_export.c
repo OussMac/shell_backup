@@ -7,7 +7,7 @@ static bool printable(char *str)
     i = 0;
     while (str[i])
     {
-        if (str[i] == (char)127)
+        if (str[i] == ANON)
             return (false);
         i++;
     }
@@ -21,10 +21,13 @@ static void print_export_list(t_envlist *env)
     curr = env;
     while (curr)
     {
-        printf("declare -x %s", curr->variable);
-        if (printable(curr->value))
-            printf("=\"%s\"",curr->value);
-        printf("\n");
+        if (ft_strcmp(curr->variable, "_") != 0)
+        {
+            printf("declare -x %s", curr->variable);
+            if (curr->exported)
+                printf("=\"%s\"",curr->value);
+            printf("\n");
+        }
         curr = curr->next;
     }
 }
@@ -78,6 +81,7 @@ int o_export(t_tree *node, t_data *data)
     t_envlist   *export_lst;
     int         i;
 
+    data->export_status = false;
     argc = arg_count(node->argv);
     export_lst = NULL;
     if (sort_list(&export_lst, data->env) != EXIT_SUCCESS)
@@ -90,13 +94,11 @@ int o_export(t_tree *node, t_data *data)
         while (node->argv[i])
         {
             if (process_export_arg(node->argv[i], data) != EXIT_SUCCESS)
-            {
-                free_exp_list(export_lst);
-                return (EXIT_FAILURE);
-            }
+                return (free_exp_list(export_lst), EXIT_FAILURE);
             i++;
         }
     }
-    free_exp_list(export_lst);
-    return (EXIT_SUCCESS);
+    if (data->exit_status == 1 && data->export_status == true)
+        return (free_exp_list(export_lst), data->exit_status = 1, EXIT_SUCCESS);
+    return (free_exp_list(export_lst), data->exit_status = 0, EXIT_SUCCESS);
 }

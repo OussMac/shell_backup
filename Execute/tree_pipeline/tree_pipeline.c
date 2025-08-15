@@ -108,6 +108,11 @@ static int	wait_for_last_pid(pid_t last_pid)
 	}
 	return (ex_st);
 }
+
+typedef struct s_pp
+{
+
+}	t_pp;
 // entry
 int execute_pipeline(t_tree *root, t_data *data, int input_fd)
 {

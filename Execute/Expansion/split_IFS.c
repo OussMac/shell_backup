@@ -19,14 +19,9 @@ bool    has_space(char *str)
     int i;
 
     i = 0;
-    if (!str)
-    {
-        printf("null str\n");
-        exit(1);
-    }
     while (str[i])
     {
-        if (str[i] == ' ')
+        if (str[i] == ' ' || str[i] == '\t')
             return (true);
         i++;
     }

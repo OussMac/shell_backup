@@ -60,11 +60,6 @@ int merger(t_tree *root, t_data *data, char **env)
 {
     static size_t   r_c;
 
-    if (merge_env(data, env) != EXIT_SUCCESS)
-    {
-        // here not cleaned up yet check all the things that happen in merge_env.
-        return (perror("Failed To Merge ENV"), EXIT_FAILURE);
-    }
     data->head = root;
     if (tree_traverser(root, data, &r_c) != EXIT_SUCCESS)
     {

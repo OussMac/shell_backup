@@ -73,8 +73,7 @@ static void	setup_child_io(int prev_fd, int fds[2], int is_pipe)
 	}
 }
 
-static pid_t	fork_pipeline_node(t_plist *node, t_data *data,
-									int prev_fd, int fds[2], int is_pipe)
+static pid_t	fork_pipeline_node(t_plist *node, t_data *data, t_pipe_info *info)
 {
 	pid_t	pid;
 
@@ -87,7 +86,7 @@ static pid_t	fork_pipeline_node(t_plist *node, t_data *data,
 	}
 	if (pid == 0)
 	{
-		setup_child_io(prev_fd, fds, is_pipe);
+		setup_child_io(info->prev_fd, info->fds, info->is_pipe);
 		/* TODO: garbage collector cleanup here */
 		exit(recursive_execution(node->cmd_node, data));
 	}
@@ -110,40 +109,45 @@ static int	wait_for_last_pid(pid_t last_pid)
 	return (ex_st);
 }
 // entry
-int	execute_pipeline(t_tree *root, t_data *data, int input_fd)
+int execute_pipeline(t_tree *root, t_data *data, int input_fd)
 {
 	t_plist	*plist;
 	t_plist	*curr;
-	int		prev_fd;
-	int		fds[2];
 	pid_t	last_pid;
-	int		is_pipe;
 	int		ret;
+	int		fds[2];
+	t_pipe_info info;
 
-	prev_fd = input_fd;
+	info.prev_fd = input_fd;
 	plist = NULL;
 	flatten_pipeline(root, &plist);
 	last_pid = -1;
 	curr = plist;
 	while (curr)
 	{
-		is_pipe = curr->next != NULL;
-		if (is_pipe && setup_pipe(fds) != EXIT_SUCCESS)
-			return (free_pipe_list(plist), EXIT_FAILURE);
-		last_pid = fork_pipeline_node(curr, data, prev_fd, fds, is_pipe);
+		info.is_pipe = curr->next != NULL;
+		if (info.is_pipe)
+		{
+			if (setup_pipe(info.fds) != EXIT_SUCCESS)
+				return (free_pipe_list(plist), EXIT_FAILURE);
+		}
+		last_pid = fork_pipeline_node(curr, data, &info);
 		if (last_pid == -1)
 			return (free_pipe_list(plist), EXIT_FAILURE);
-		if (prev_fd != STDIN_FILENO)
-			close(prev_fd);
-		if (is_pipe)
+
+		if (info.prev_fd != STDIN_FILENO)
+			close(info.prev_fd);
+
+		if (info.is_pipe)
 		{
-			close(fds[1]);
-			prev_fd = fds[0];
+			close(info.fds[1]);
+			info.prev_fd = info.fds[0];
 		}
 		curr = curr->next;
 	}
-	if (prev_fd != STDIN_FILENO)
-		close(prev_fd);
+	if (info.prev_fd != STDIN_FILENO)
+		close(info.prev_fd);
+
 	free_pipe_list(plist);
 	ret = wait_for_last_pid(last_pid);
 	data->child_state = false;

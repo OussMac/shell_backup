@@ -93,17 +93,6 @@ static char *eliminate_ifs_equal(char *str)
 
 static int append_ifs(t_ifs_vars *ifs, char *str)
 {
-    // if (has_equal(str))
-    // {
-    //     ifs->string = eliminate_ifs_equal(str);
-    //     if (!ifs->string)
-    //         return (EXIT_FAILURE);
-    //     if (add_ifs_back(&ifs->ifs_list, ifs->string) != EXIT_SUCCESS)
-    //         return (free(ifs->string), ifs->string = NULL, EXIT_FAILURE);
-    //     free(ifs->string);
-    //     ifs->string = NULL;
-    //     return(EXIT_SUCCESS);
-    // }
     ifs->ifs_split = ft_split(str, (char)1);
     if (!ifs->ifs_split)
         return (EXIT_FAILURE);
@@ -126,12 +115,7 @@ char    **ifs_pass(char **argv)
     ifs.ifs_list = NULL;
     while (argv[ifs.i])
     {
-        if (ft_strchr(argv[ifs.i], '='))
-        {
-            if (add_ifs_back(&ifs.ifs_list, argv[ifs.i]) != EXIT_SUCCESS)
-                return (free_ifs_list(ifs.ifs_list), NULL);
-        }
-        else if (has_delim(argv[ifs.i]))
+        if (has_delim(argv[ifs.i]))
         {
             if (append_ifs(&ifs, argv[ifs.i]) != EXIT_SUCCESS)
                 return (free_ifs_list(ifs.ifs_list), NULL);
@@ -149,18 +133,45 @@ char    **ifs_pass(char **argv)
     return (free_ifs_list(ifs.ifs_list), ifs.new_argv);
 }
 
-char    *red_ifs_pass(char *str)
+char *red_ifs_pass(char *str)
 {
-    char    **ifs_split;
-    char    *joined;
+	char	*cleaned;
+	int		i;
+	int		j;
 
-    if (str[0] == '\0')
-        return (ft_strdup(""));
-    ifs_split = ft_split(str, (char)1);
-    if (!ifs_split)
-        return (NULL);
-    joined = strjoiner(ifs_split, " ", arg_count(ifs_split));
-    if (!joined)
-        return (free_argv(ifs_split), NULL);
-    return (joined);
+	if (!str)
+		return (NULL);
+	cleaned = malloc(sizeof(char) * (o_ft_strlen(str) + 1));
+	if (!cleaned)
+		return (NULL);
+
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if ((unsigned char)str[i] != 1)
+		{
+			cleaned[j] = str[i];
+			j++;
+		}
+		i++;
+	}
+	cleaned[j] = '\0';
+	return (cleaned);
 }
+
+// char    *red_ifs_pass(char *str)
+// {
+//     char    **ifs_split;
+//     char    *joined;
+
+//     if (str[0] == '\0')
+//         return (ft_strdup(""));
+//     ifs_split = ft_split(str, (char)1);
+//     if (!ifs_split)
+//         return (NULL);
+//     joined = strjoiner(ifs_split, " ", arg_count(ifs_split));
+//     if (!joined)
+//         return (free_argv(ifs_split), NULL);
+//     return (joined);
+// }

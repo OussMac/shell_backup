@@ -139,20 +139,23 @@ int handle_red(t_tree *node, t_data *data)
     t_red   *curr_red;
     char    *expanded;
     bool    ambig;
+    char    *og;
 
     init_red(data, node, &curr_red);
     while (curr_red)
     {
         ambig = expandable_check(curr_red->value);
+        og = ft_strdup(curr_red->value);
         if (check_expanded_malloc(&expanded, data, curr_red) != EXIT_SUCCESS)
             return (EXIT_FAILURE);
         free(curr_red->value);
         curr_red->value = expanded;
         curr_red->value = red_ifs_pass(curr_red->value); // free this
         if (curr_red->tok != DEL_ID && ambig_wrapper(curr_red->value, ambig, curr_red->was_d_quote))
-            return (dprintf(2 , RED"Master@Mind: %s: ambiguous redirect\n"RST, curr_red->value), EXIT_FAILURE);
+            return (dprintf(2 , RED"Master@Mind: %s: ambiguous redirect\n"RST, og), EXIT_FAILURE);
         if (redirect_current(curr_red, data) != EXIT_SUCCESS)
             return (data->exit_status = EXIT_FAILURE, EXIT_FAILURE);
+        free(og);
         curr_red = curr_red->next;
     }
     return (EXIT_SUCCESS);

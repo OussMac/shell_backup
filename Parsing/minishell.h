@@ -463,6 +463,13 @@ int					printer_red(t_red *curr, char *name);
 
 // ouss functions  ---------------------
 
+typedef struct s_pipe_info
+{
+	int		prev_fd;
+	int		fds[2];
+	int		is_pipe;
+}	t_pipe_info;
+
 // garbage collector
 
 typedef struct s_mind_alloc

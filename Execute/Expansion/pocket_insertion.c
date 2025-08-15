@@ -27,7 +27,6 @@ static int env_key(char *str, t_data *data, char ***pockets, bool was_d_quoted)
 	if (data->pc.keylen > 0) // valid key
 	{
 		raw = expand_key_wrapper(str, data);
-		printf("==> raw %s\n", raw);
         if (!raw)
             return ((*pockets)[data->pc.j++] = raw, EXIT_FAILURE); // free backwards.
         if (has_space(raw) && !only_spaces(raw) && !was_d_quoted)

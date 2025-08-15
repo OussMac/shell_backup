@@ -1,7 +1,7 @@
 #ifndef EXECUTE_H
 # define EXECUTE_H
 
-# include "../parsing/minishell.h"
+# include "../Parsing/minishell.h"
 # define RECURS_LIMIT (size_t)500
 # define EXECVE_FAILURE 127
 # define EXPORTED true

@@ -613,6 +613,8 @@ char				*strjoiner(char **list, char *sep, size_t size);
 void    			normalize_command(char *str);
 void 				print_argv(char **argv);
 
+int					merge_env(t_data *data, char **env);
+
 
 
 // Builtins Tools

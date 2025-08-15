@@ -60,6 +60,9 @@ int	main(int argc, char **argv, char **env)
 	init_data_struct(&data, env);
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
+	// before anything else merge env
+	 if (merge_env(&data, env) != EXIT_SUCCESS)
+        return (perror("Failed To Merge ENV"), EXIT_FAILURE); // cleanup.
 	// isatty
 	// if (!isatty(1))
 	while (1)

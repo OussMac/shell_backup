@@ -57,17 +57,23 @@ int	here_doc_ops(t_token *id_class, t_data *data, char *del)
 {
 	int		sv;
 	char	*in;
+	char	*expanded;
 
 	sv = dup(STDIN_FILENO);
 	signal(SIGINT, sig_heredoc);
 	in = readline("Here_doc> ");
+	expanded = NULL;
 	while (ft_strcmp(del, in))
 	{
 		if (!in && g_flag == SIGINT)
 			return (here_doc_interruption(in, data, sv), 0);
-		else if (!in && g_flag != SIGINT)
+		else if (!in && g_flag != SIGINT) // this needs to be moved down.
 			return (single_interruption(in, data, sv), 1);
-		cpy_to_file(in, data);
+		if (!id_class->was_double_quote && !id_class->was_single_quote)
+			expanded = expand_var(in, data, true); // expanding var might need to free
+		else
+			expanded = in;
+		cpy_to_file(expanded, data);
 		in = readline("Here_doc> ");
 	}
 	close(sv);

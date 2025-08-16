@@ -602,7 +602,7 @@ void    			restore_IO(int saved_in, int saved_out, bool no_red);
 char				*red_ifs_pass(char *str);
 bool 				only_spaces(char *raw);
 
-int 				red_here_doc(t_red *red);
+int					red_here_doc(t_red *red, t_data *data);
 
 // Free_tree (error handling)
 void                free_argv(char **argv);
@@ -621,6 +621,7 @@ void    			normalize_command(char *str);
 void 				print_argv(char **argv);
 
 int					merge_env(t_data *data, char **env);
+char				**tab_split(char *s, char *sep);
 
 
 

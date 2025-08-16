@@ -21,7 +21,7 @@ bool has_plus(char *str)
     i = 0;
     while (str[i])
     {
-        if (str[i] == '+')
+        if (str[i] == '+' && str [i + 1] == '=')
             return (true);
         i++;
     }

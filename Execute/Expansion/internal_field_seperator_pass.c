@@ -99,6 +99,20 @@ static int append_ifs(t_ifs_vars *ifs, char *str)
     ifs->j = 0;
     while (ifs->ifs_split[ifs->j])
     {
+        // have to make this an algorithm to suit all possibilities.
+        if (ifs->ifs_split[ifs->j + 1] && ifs->ifs_split[ifs->j + 1][0] == '=')
+        {
+            char *joined = gnl_ft_strjoin(ifs->ifs_split[ifs->j], ifs->ifs_split[ifs->j + 1]);
+            if (ifs->ifs_split[ifs->j + 2])
+            {
+                joined = gnl_ft_strjoin(joined, ifs->ifs_split[ifs->j + 2]);
+                if (add_ifs_back(&ifs->ifs_list, joined) != EXIT_SUCCESS)
+                    return ( free_argv(ifs->ifs_split), EXIT_FAILURE);
+                ifs->j++;
+            }
+            ifs->j++;
+            continue;
+        }
         if (add_ifs_back(&ifs->ifs_list, ifs->ifs_split[ifs->j++]) != EXIT_SUCCESS)
             return ( free_argv(ifs->ifs_split), EXIT_FAILURE);
     }

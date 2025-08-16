@@ -67,16 +67,76 @@ static int  red_append(t_red *red, t_data *data)
     return (EXIT_SUCCESS);
 }
 
-int red_here_doc(t_red *red)
+
+
+int read_file(t_red *red, char **joined)
 {
+    char    *file;
+    char    *tmp;
+
+    file = get_next_line(red->fd_here_doc);
+    while (file)
+    {
+        tmp = *joined;
+        *joined = gnl_ft_strjoin(*joined, file);
+        if (!*joined)
+        {
+            // garbage
+            free(tmp);
+            free(file);
+            return (EXIT_FAILURE);
+        }
+        free(tmp); // garabge
+        free(file);
+        file = get_next_line(red->fd_here_doc);
+    }
+    return (EXIT_SUCCESS);
+}
+
+char    *expand_heredoc(char *joined, t_red *red, t_data *data)
+{
+    char    *expanded;
+
+    if (!red->was_d_quote && !red->was_s_quote)
+    {
+        expanded = expand_var(joined, data, true);
+        free(joined);
+    }
+    else
+        expanded = joined;
+    return (expanded);
+}
+
+
+
+int red_here_doc(t_red *red, t_data *data)
+{
+    char *file;
+    char *joined ;
+    char *expanded;
+    int   pipefd[2];
+
     if (red->fd_here_doc == -1)
-        return (EXIT_FAILURE);
+        return (EXIT_SUCCESS);
+    joined = NULL;
+    read_file(red, &joined);
+    if (!joined)
+        joined = ft_strdup("");
+    expanded = expand_heredoc(joined, red, data);
+    if (pipe(pipefd) == -1)
+        return (perror("pipe"), EXIT_FAILURE);
+    write(pipefd[1], expanded, o_ft_strlen(expanded));
+    close(pipefd[1]); // Close write end
+    free(expanded); // garbage...
+    close(red->fd_here_doc);
+    red->fd_here_doc = pipefd[0];
     if (dup2(red->fd_here_doc, STDIN_FILENO) == -1)
         return (perror("dup2"), EXIT_FAILURE);
     close(red->fd_here_doc);
     red->fd_here_doc = -1;
     return (EXIT_SUCCESS);
 }
+
 
 static bool check_expanded_malloc(char **expanded, t_data *data, t_red *curr_red)
 {
@@ -117,7 +177,7 @@ static int  redirect_current(t_red *curr_red, t_data *data)
     }
     else if(curr_red->tok == DEL_ID)
     {
-        if (red_here_doc(curr_red) != EXIT_SUCCESS)
+        if (red_here_doc(curr_red, data) != EXIT_SUCCESS)
             return (EXIT_FAILURE);
     }
     return (EXIT_SUCCESS);

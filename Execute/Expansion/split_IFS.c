@@ -84,7 +84,7 @@ int expand_unqoted_d(char ***pockets, t_data *data, char *raw)
     int     mc_argc;
     char    **split;
 
-    split = ft_split(raw, ' ');
+    split = tab_split(raw, " \t\n\v\f\r");
     mc_argc = arg_count(split);
     new_pocket = malloc((data->pc.j + mc_argc + 1) * sizeof(char *));
     i = 0;

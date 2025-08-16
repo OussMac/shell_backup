@@ -370,3 +370,23 @@ Master@Mindv3.0> export bf=r
 Master@Mindv3.0> 
 
 need to get from equals not only if its next to a.
+
+
+bash-3.2$ export a="b c d"
+bash-3.2$ ls $a=$a
+ls: b: No such file or directory
+ls: c: No such file or directory
+ls: c: No such file or directory
+ls: d: No such file or directory
+ls: d=b: No such file or directory
+
+Master@Mindv3.0> ls $a=$a
+ls: =: No such file or directory
+ls: a: No such file or directory
+ls: a: No such file or directory
+ls: b: No such file or directory
+ls: b: No such file or directory
+ls: c: No such file or directory
+ls: c: No such file or directory
+
+kan9sm 7da tosawi.

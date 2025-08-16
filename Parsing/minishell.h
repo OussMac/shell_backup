@@ -623,6 +623,8 @@ void 				print_argv(char **argv);
 int					merge_env(t_data *data, char **env);
 char				**tab_split(char *s, char *sep);
 
+char				**remove_nonprintables_argv(char **argv);
+
 
 
 // Builtins Tools

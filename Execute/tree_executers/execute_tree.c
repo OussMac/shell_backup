@@ -20,15 +20,22 @@ static int	exec_command(t_tree *node, t_data *data)
 	node->argv = convert_list_to_argv(node->arg, data);
 	if (!node->argv)
 		return (EXIT_FAILURE);
-	if (node->red && handle_red(node, data) != EXIT_SUCCESS)
-		return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
-			EXIT_FAILURE);
-	if (add_last_executed(node, data) != EXIT_SUCCESS)
-		return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
-			EXIT_FAILURE);
+	// if (node->red && handle_red(node, data) != EXIT_SUCCESS)
+	// 	return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
+	// 		EXIT_FAILURE);
+	// if (add_last_executed(node, data) != EXIT_SUCCESS)
+	// 	return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
+	// 		EXIT_FAILURE);
 	if (!anon(node, arg_count(node->argv)) && node->argv[0])
 	{
-		normalize_command(node->argv[0]);
+		if (node->red && handle_red(node, data) != EXIT_SUCCESS)
+		return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
+				EXIT_FAILURE);
+		if (add_last_executed(node, data) != EXIT_SUCCESS)
+			return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
+				EXIT_FAILURE);
+		// normalize_command(node->argv[0]);
+		node->argv = remove_nonprintables_argv(node->argv);
 		if (validate_builtin(node->argv[0]))
 			data->exit_status = exec_builtin(node, data);
 		else

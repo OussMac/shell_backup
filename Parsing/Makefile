@@ -68,6 +68,7 @@ SRC = minishell.c identificators/identity_tools/identool0.c\
 		../Execute/tree_executers/merge_utils/exec_node.c ../Execute/Expansion/wildcard_expansion.c \
 		../Execute/Expansion/wildcard_utils.c ../Execute/tree_executers/gnl.c \
 		../Execute/tree_executers/gnl_utils.c ../Execute/tree_executers/tab_split.c \
+		../Execute/anon_system/remove_anon.c
 		
 
 OBJ = $(SRC:.c=.o)

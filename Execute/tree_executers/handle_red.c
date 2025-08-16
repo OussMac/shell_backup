@@ -1,5 +1,20 @@
 #include "../execute.h"
 
+bool    has_ambig_space(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == ' ' || str[i] == '\t' 
+            || str[i] == (char)1 || str[i] == (char)127)
+            return (true);
+        i++;
+    }
+    return (false);
+}
+
 static bool expandable_check(char *str)
 {
     int i;
@@ -187,7 +202,7 @@ static bool ambig_wrapper(char *str, bool ambig_dollar, bool dquoted)
 {
     if (!ambig_dollar)
         return (false);
-    if (!dquoted && has_space(str))
+    if (!dquoted && has_ambig_space(str))
         return (true);
     if (!dquoted && str[0] == ANON)
         return (true);
@@ -200,6 +215,7 @@ int handle_red(t_tree *node, t_data *data)
     char    *expanded;
     bool    ambig;
     char    *og;
+    char    *cleaned;
 
     init_red(data, node, &curr_red);
     while (curr_red)
@@ -210,9 +226,13 @@ int handle_red(t_tree *node, t_data *data)
             return (EXIT_FAILURE);
         free(curr_red->value);
         curr_red->value = expanded;
-        curr_red->value = red_ifs_pass(curr_red->value); // free this
         if (curr_red->tok != DEL_ID && ambig_wrapper(curr_red->value, ambig, curr_red->was_d_quote))
             return (dprintf(2 , RED"Master@Mind: %s: ambiguous redirect\n"RST, og), EXIT_FAILURE);
+        cleaned = red_ifs_pass(curr_red->value);
+        if (!cleaned)
+            return (free(og), free(curr_red->value), EXIT_FAILURE);
+        free(curr_red->value);
+        curr_red->value = cleaned;
         if (redirect_current(curr_red, data) != EXIT_SUCCESS)
             return (data->exit_status = EXIT_FAILURE, EXIT_FAILURE);
         free(og);

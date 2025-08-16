@@ -1,32 +1,61 @@
 #include "../../execute.h"
 
-static char	*find_in_path(char *cmd, t_envlist *env)
+static char	*search_in_cwd(char *cmd)
+{
+	char	cwd[PATH_MAX];
+	char	*tmp;
+	char	*full_path;
+
+	if (!getcwd(cwd, sizeof(cwd)))
+		return (NULL);
+	tmp = ft_strjoin(cwd, "/");
+	if (!tmp)
+		return (NULL);
+	full_path = ft_strjoin(tmp, cmd);
+	free(tmp);
+	if (!full_path)
+		return (NULL);
+	if (access(full_path, X_OK) == 0)
+		return (full_path);
+	free(full_path);
+	return (NULL);
+}
+
+typedef struct s_path
 {
 	char	**paths;
 	char	*tmp;
 	char	*full_path;
 	int		i;
+}	t_path;
+
+char	*find_in_path(char *cmd, t_envlist *env)
+{
+	t_path	pt;
 
 	while (env && ft_strcmp(env->variable, "PATH") != 0)
 		env = env->next;
 	if (!env || !env->value)
+		return (search_in_cwd(cmd));
+	pt.paths = ft_split(env->value, ':');
+	if (!pt.paths)
 		return (NULL);
-	paths = ft_split(env->value, ':');
-	if (!paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
+	pt.i = 0;
+	while (pt.paths[pt.i])
 	{
-		tmp = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(full_path, X_OK) == 0)
-			return (free_argv(paths), full_path);
-		free(full_path);
-		i++;
+		pt.tmp = ft_strjoin(pt.paths[pt.i], "/");
+		if (!pt.tmp)
+			return (free_argv(pt.paths), NULL);
+		pt.full_path = ft_strjoin(pt.tmp, cmd);
+		free(pt.tmp);
+		if (!pt.full_path)
+			return (free_argv(pt.paths), NULL);
+		if (access(pt.full_path, X_OK) == 0)
+			return (free_argv(pt.paths), pt.full_path);
+		free(pt.full_path);
+		pt.i++;
 	}
-	free_argv(paths);
-	return (NULL);
+	return (free_argv(pt.paths), NULL);
 }
 
 static char	*get_absolute_path(char *cmd, t_envlist *env)

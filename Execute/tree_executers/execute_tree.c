@@ -39,7 +39,6 @@ static int	exec_command(t_tree *node, t_data *data)
 		if (add_last_executed(node, data) != EXIT_SUCCESS)
 			return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
 				EXIT_FAILURE);
-		// normalize_command(node->argv[0]);
 		node->argv = remove_nonprintables_argv(node->argv);
 		if (validate_builtin(node->argv[0]))
 			data->exit_status = exec_builtin(node, data);
@@ -73,6 +72,9 @@ int	recursive_execution(t_tree *node, t_data *data)
 int execute_tree(t_tree *root, t_data *data, char **env, void *re_built)
 {
     int rec_exit_status;
+	static t_mind_alloc *gc;
+
+	
     if (!root)
         return (clean_up(root, NULL), EXIT_FAILURE);
     if (merger(root, data, env) != EXIT_SUCCESS)

@@ -19,31 +19,40 @@ static int get_keylen(char *str, t_data *data)
 	return (data->pc.keylen);
 }
 
+static bool is_in_assignment(char *str)
+{
+	if (ft_strchr(str, '=') && str[0] != '$')
+		return (true);
+	return (false);
+}
+
 static int env_key(char *str, t_data *data, char ***pockets, bool was_d_quoted)
 {
-    char    *raw;
+    char *raw;
+	bool is_assignment;
 
-	data->pc.keylen = get_keylen(str, data);
-	if (data->pc.keylen > 0) // valid key
-	{
-		raw = expand_key_wrapper(str, data);
+    is_assignment = is_in_assignment(str);
+    data->pc.keylen = get_keylen(str, data);
+    if (data->pc.keylen > 0)
+    {
+        raw = expand_key_wrapper(str, data);
         if (!raw)
-            return ((*pockets)[data->pc.j++] = raw, EXIT_FAILURE); // free backwards.
-        if (has_space(raw) && !only_spaces(raw) && !was_d_quoted)
+            return ((*pockets)[data->pc.j++] = raw, EXIT_FAILURE);
+        if (has_space(raw) && !only_spaces(raw) && !was_d_quoted && !is_assignment)
         {
             if (expand_unqoted_d(pockets, data, raw) != EXIT_SUCCESS)
-				return (data->pc.j++, EXIT_FAILURE);
+                return (data->pc.j++, EXIT_FAILURE);
         }
         else
-		    (*pockets)[data->pc.j++] = raw;
-	}
-	else // standalone $
-	{
-		(*pockets)[data->pc.j] = standalone(&data->pc.i);
-		if (!(*pockets)[data->pc.j++])
-			return(EXIT_FAILURE); // free backwards.
-	}
-	return (EXIT_SUCCESS);
+            (*pockets)[data->pc.j++] = raw;
+    }
+    else
+    {
+        (*pockets)[data->pc.j] = standalone(&data->pc.i);
+        if (!(*pockets)[data->pc.j++])
+            return (EXIT_FAILURE);
+    }
+    return (EXIT_SUCCESS);
 }
 
 

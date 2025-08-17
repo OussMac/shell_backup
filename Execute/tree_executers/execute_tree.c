@@ -1,17 +1,28 @@
 #include "../execute.h"
 
+void	print_exec_error(char *cmd, int code)
+{
+	if (code == 127)
+	{
+		if (ft_strchr(cmd, '/'))
+			dprintf(STDERR_FILENO, "Migrane: %s: No such file or directory\n", cmd);
+		else
+			dprintf(STDERR_FILENO, "Migrane: %s: command not found\n", cmd);
+	}
+	else if (code == 126)
+	{
+		if (o_ft_strlen(cmd) > 0 && cmd[o_ft_strlen(cmd) - 1] == '/')
+			dprintf(STDERR_FILENO, "Migrane: %s: Is a directory\n", cmd);
+		else
+			dprintf(STDERR_FILENO, "Migrane: %s: Permission denied\n", cmd);
+	}
+}
+
 static int  update_env_variables(t_data *data)
 {
-    char **temp_vec;
-
-    temp_vec = data->env_vec;
-    data->env_vec = convert_list_to_envp(data->env);
+    data->env_vec = convert_list_to_envp(data->env, data);
     if (!data->env_vec)
-    {
-        free(temp_vec);
         return (EXIT_FAILURE);
-    }
-    free(temp_vec);
     return (EXIT_SUCCESS);
 }
 
@@ -20,12 +31,6 @@ static int	exec_command(t_tree *node, t_data *data)
 	node->argv = convert_list_to_argv(node->arg, data);
 	if (!node->argv)
 		return (EXIT_FAILURE);
-	// if (node->red && handle_red(node, data) != EXIT_SUCCESS)
-	// 	return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
-	// 		EXIT_FAILURE);
-	// if (add_last_executed(node, data) != EXIT_SUCCESS)
-	// 	return (restore_IO(data->saved_in, data->saved_out, node->red == NULL),
-	// 		EXIT_FAILURE);
 	if (!anon(node, arg_count(node->argv)) && node->argv[0])
 	{
 		if (node->red && handle_red(node, data) != EXIT_SUCCESS)
@@ -69,9 +74,9 @@ int execute_tree(t_tree *root, t_data *data, char **env, void *re_built)
 {
     int rec_exit_status;
     if (!root)
-        return (clean_up(root, data), EXIT_FAILURE);
+        return (clean_up(root, NULL), EXIT_FAILURE);
     if (merger(root, data, env) != EXIT_SUCCESS)
-        return (clean_up(root, data), perror("Merge Failed"), EXIT_FAILURE);
+        return (clean_up(root, NULL), perror("Merge Failed"), EXIT_FAILURE);
     rec_exit_status = recursive_execution(root, data);
     return (clean_up(root, data), rec_exit_status);
 }

@@ -72,7 +72,6 @@ int expand_list(t_arg *arg, t_data *data)
 	first_arg = ft_strdup(curr->value);
     while (curr)
     {
-		// printf("arg =====> %s\n", curr->value);
         if (!curr->was_s_quote) // if not single quoted, expand
         {
             expanded = expand_var(curr->value, data, curr->was_d_quote); // wouldnt need pocket expansion algo we will do it differently
@@ -83,8 +82,6 @@ int expand_list(t_arg *arg, t_data *data)
         }
 		if (try_expand_wildcard(curr) != EXIT_SUCCESS)
 			return (EXIT_FAILURE);
-        // skips over literal strings s quoted, aymane trims those quotes anyway.
-		// printf("expanded arg =====> %s\n", curr->value);
         curr = curr->next;
     }
 	free(first_arg);

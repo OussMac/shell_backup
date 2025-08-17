@@ -52,11 +52,7 @@ char **convert_list_to_argv(t_arg *arg, t_data *data)
 		}
 	}
 	cv.argv[cv.i] = NULL;
-	// puts("before ifs pass");
-	// print_argv(cv.argv);
 	cv.new_argv = ifs_pass(cv.argv);
-	// puts("after ifs pass");
-	// print_argv(cv.new_argv);
 	if (!cv.new_argv)
 		return (free_argv(cv.argv), free_arg_list(cv.free_head), NULL);
 	return (free_argv(cv.argv), free_arg_list(cv.free_head), cv.new_argv);
